@@ -33,8 +33,7 @@ app.use(bodyParser.json());
 //And save it
 app.use('/api/auth', userRoad);
 app.use('/api/sauces', saucesRoad);
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, '../images')));
 
 //Export app for an access in other files
 module.exports = app;
-
