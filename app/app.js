@@ -1,14 +1,14 @@
-//Import express & mongoose & path & bodyParser
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const path = require('path');
+//IMPORTS
+const express = require('express'); //Import du package "express"
+const mongoose = require('mongoose'); //Import du package "mongoose"
+const bodyParser = require('body-parser'); //Import du package "body-parser"
+const path = require('path'); //Import du package "path"
 
-//Get user road
-const saucesRoad = require('../road/sauce');
-const userRoad = require('../road/user');
+//IMPORTS DES ROUTES
+const saucesRoad = require('../road/sauce'); //Import de la route Sauce
+const userRoad = require('../road/user'); //Import de la route Utilisateur
 
-//Connect app with MongoDB
+//Connexion à la base de données
 mongoose.connect('mongodb+srv://JimmyGki:Jimmy270103@p6-piquante.dqmncyu.mongodb.net/?retryWrites=true&w=majority',
 {
     useNewUrlParser: true,
@@ -17,23 +17,27 @@ mongoose.connect('mongodb+srv://JimmyGki:Jimmy270103@p6-piquante.dqmncyu.mongodb
 .then(() => console.log('Connexion à MongoDB réussie !'))
 .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-//Call express for start app express
+//Création de l'app "express"
 const app = express();
 
-//Allow the application to access the API
+//Intercepte toutes les requêtes qui ont un content-type json
+app.use(bodyParser.json());
+
+//Middleware général qui sera appliqué à toutes les routes
 app.use((req, res, next) => {
+      //Acceder à l'API deuis n'importe quelle origine
     res.setHeader('Access-Control-Allow-Origin', '*');
+      //Possibilité d'ajouter les headers mentionnés aux requètes envoyées vers l'API
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+      //Possibilité d'envoyer des requètes avec les méthodes mentionnées
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
   });
 
-app.use(bodyParser.json());
-
-//And save it
+//Enregistrement du "router" pour toutes les demandes effectuées
 app.use('/images', express.static(path.join(__dirname, '../images')));
 app.use('/api/auth', userRoad);
 app.use('/api/sauces', saucesRoad);
 
-//Export app for an access in other files
+//Export de l'app "express"
 module.exports = app;

@@ -1,7 +1,10 @@
-const http = require('http');
-const app = require('./app/app');
+//IMPORTS
+const http = require('http'); //Import du package "http"
+const app = require('./app/app'); //Import de l'app "express"
 
-//Return a valid port
+// CONFIGURATION DU PORT
+
+//Renvoie d'un port valide, sous la forme d'un numéro ou d'une chaine de caractère
 const normalizePort = val => {
   const port = parseInt(val, 10);
 
@@ -16,7 +19,7 @@ const normalizePort = val => {
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-//Research a differents errors to manage them
+//Recherche des différentes erreurs pour ensuite les gérer de manière appropriée, puis les enregistrer dans le serveur
 const errorHandler = error => {
   if (error.syscall !== 'listen') {
     throw error;
@@ -46,4 +49,5 @@ server.on('listening', () => {
   console.log('Listening on ' + bind);
 });
 
+//Ecoute du port
 server.listen(port);

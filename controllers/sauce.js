@@ -1,24 +1,23 @@
-//Import model sauce
-const Sauce = require('../models/sauce');
-//Import package file system
-const fs = require('fs');
+//IMPORTS
+const Sauce = require('../models/sauce'); //Import du model sauce
+const fs = require('fs'); //Import du package "file system"
 
 
-///////////////VOIR TOUTE LES SAUCES///////////////
+//Middleware pour voir toute les sauces
 exports.getAllSauces = (req, res, next) => {
   Sauce.find()
     .then((sauces) =>  res.status(200).json(sauces))
     .catch((error) =>  res.status(400).json({ error }));
 };
 
-///////////////VOIR UNE SEULE SAUCE///////////////
+//Middleware pour voir une sauce
 exports.getOneSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then(sauce => res.status(200).json(sauce))
     .catch(error => res.status(404).json({ error }));
 };
 
-//Create new middleware for create sauce
+//Middleware pour créer une nouvelle sauce
 exports.createSauce = (req, res, next) => {
   //Transforme la chaîne de caractère en objet
   const sauceObject = JSON.parse(req.body.sauce);
@@ -31,15 +30,15 @@ exports.createSauce = (req, res, next) => {
     //On recréer l'url complète de l'image
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
-  //On met à jour les modifications dans la base de données
+  //On met à jour la création de la sauce dans la base de données
   sauce.save()
     .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
     .catch(error => res.status(400).json({ error }));
 };
 
-//Create middleware for modify sauce
+//Middleware pour modifier une sauce
 exports.modifySauce =  (req, res, next) => {
-    //On vérifie si le fichier request existe
+    //On vérifie si le fichier request.file existe
   const sauceObject = req.file ?
   { 
     ...JSON.parse(req.body.sauce),
@@ -52,15 +51,15 @@ exports.modifySauce =  (req, res, next) => {
     .catch(error => res.status(400).json({ error }));
 };
 
-//New Middleware for delete sauce
+//Middleware pour supprimer une sauce
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({_id: req.params.id})
   .then(sauce => {
-    //On sépare le nom du fichier
+    //On récupère le nom du fichier à supprimer
     const filename = sauce.imageUrl.split('/images/')[1];
     //On utilise unlink du package "fs" pour supprimer un fichier du système
     fs.unlink(`images/${filename}`, () => {
-        //On met à jour la suppression dans la base de données
+      //On met à jour la suppression dans la base de données
       Sauce.deleteOne({ _id: req.params.id })
       .then(() => res.status(200).json({ message: 'Objet supprimé !'}))
       .catch(error => res.status(400).json({ error }));
@@ -113,6 +112,7 @@ exports.likeSauce = (req, res, next) =>{
               .catch((error) => res.status(400).json({ error }))
           }
           if (sauce.usersDisliked.includes(userId)) { // Si il s'agit d'annuler un dislike
+            //Mise à jour des modifications dans la base de données
             Sauce.updateOne({
                 _id: sauceId}, 
                 {

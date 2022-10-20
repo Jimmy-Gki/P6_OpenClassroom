@@ -1,9 +1,8 @@
-// appel de mongoose
-const mongoose = require('mongoose');
-// appel de mongoose-unique-validator après installation
-const uniqueValidator = require('mongoose-unique-validator');
+//IMPORTS
+const mongoose = require('mongoose'); //Import du package mongoose
+const uniqueValidator = require('mongoose-unique-validator'); //Import du package unique-validator
 
-// création de schéma de connection d'utilisateur
+//Création d'un schéma de données
 const userSchema = mongoose.Schema({
   // email unique
   email: { type: String, required: true, unique: true },
@@ -11,7 +10,8 @@ const userSchema = mongoose.Schema({
   password: { type: String, required: true },
 });
 
-// utilisation du schema via le plugin de mongoose-unique-validator
-userSchema.plugin(uniqueValidator);
-// exportation du schema modele
+//utilisation de "unique-validator" au schéma de données
+userSchema.plugin(uniqueValidator); //ce plugin s'assurera que 2 utilisateurs ne puissent pas partager la même adresse mail
+
+//Export du modèle de données 
 module.exports = mongoose.model("userModel", userSchema);

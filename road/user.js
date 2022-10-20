@@ -1,12 +1,12 @@
-//Import express
-const express = require('express');
+//IMPORTS
+const express = require('express'); //Import du package express
+const userCtrl = require('../controllers/user'); //Import du controlleur utilisateur
+
+//Création du router
 const router = express.Router();
 
-//Import user controller
-const userCtrl = require('../controllers/user');
+router.post('/signup', userCtrl.signup); //Route pour l'inscription d'un nouvel utilisateur
+router.post('/login', userCtrl.login); //Route pour la connexion d'un utilisateur
 
-router.post('/signup', userCtrl.signup);
-router.post('/login', userCtrl.login);
-
-//Export router in an other road
+//Exportation du router
 module.exports = router;
