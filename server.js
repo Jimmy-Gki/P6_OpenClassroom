@@ -1,7 +1,7 @@
 //IMPORTS
 const http = require('http'); //Import du package "http"
 const app = require('./app/app'); //Import de l'app "express"
-
+require ('dotenv').config("../.env");
 // CONFIGURATION DU PORT
 
 //Renvoie d'un port valide, sous la forme d'un numéro ou d'une chaine de caractère

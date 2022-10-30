@@ -1,4 +1,6 @@
 //IMPORTS
+const dotenv = require('dotenv').config()
+console.log(dotenv);
 const express = require('express'); //Import du package "express"
 const mongoose = require('mongoose'); //Import du package "mongoose"
 const bodyParser = require('body-parser'); //Import du package "body-parser"
@@ -9,13 +11,13 @@ const saucesRoad = require('../road/sauce'); //Import de la route Sauce
 const userRoad = require('../road/user'); //Import de la route Utilisateur
 
 //Connexion à la base de données
-mongoose.connect('mongodb+srv://JimmyGki:Jimmy270103@p6-piquante.dqmncyu.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect(`mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER_NAME}.mongodb.net/${process.env.MONGODB_DATABASE_NAME}?retryWrites=true&w=majority`,
 {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
 .then(() => console.log('Connexion à MongoDB réussie !'))
-.catch(() => console.log('Connexion à MongoDB échouée !'));
+.catch(() => console.log('Connexion à MongoDB échouée !'));  
 
 //Création de l'app "express"
 const app = express();
