@@ -1,6 +1,7 @@
 //IMPORTS
 const bcrypt = require('bcrypt'); //Import du package bcrypt
 const jwt = require('jsonwebtoken'); //Import du package json web token
+require("dotenv").config(); //Import du package dotenv
 
 const userModel = require('../models/user'); //Import du modèle de données "utilisateur"
 
@@ -16,8 +17,8 @@ exports.signup = (req, res, next) => {
         });
         //Enregistrement de l'utilisateur dans la base de données
         user.save()
-          .then(() => res.status(200).json({ message: 'Utilisateur créé !' }))
-          .catch(error => res.status(400).json({ message: error.message }));
+          .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+          .catch(error => res.status(400).json({ message: 'utilisateur existant !' }));
       })
       .catch(error => res.status(500).json({ error }));
 };
@@ -30,7 +31,7 @@ exports.login = (req, res, next) => {
             //Si l'utilisateur est introuvable
             if (!user) {
                 //Afficher un message d'erreur
-                return res.status(401).json({ error: 'Utilisateur non trouvé !' });
+                return res.status(401).json({ message: 'Utilisateur non trouvé !' });
             }
             //On compare le mdp envoyé par l'utilisateur qui essaye de se connecter avec le hash qui est dans la base de données
             bcrypt.compare(req.body.password, user.password)
@@ -38,7 +39,7 @@ exports.login = (req, res, next) => {
                     //Si le mdp est incorrect
                     if (!valid) {
                         //Renvoyer un message d'erreur
-                        return res.status(401).json({ error: 'Mot de passe incorrect !' });
+                        return res.status(401).json({ message: 'Mot de passe incorrect !' });
                     }
                     //Le mdp correspond
                     res.status(200).json({
