@@ -31,7 +31,7 @@ mongoose.connect(`mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGOD
 //Intercepte toutes les requêtes qui ont un content-type json
 app.use(bodyParser.json());
 
-//Middleware général qui sera appliqué à toutes les routes
+//Définition des CORS
 app.use((req, res, next) => {
       //Acceder à l'API deuis n'importe quelle origine
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -42,10 +42,10 @@ app.use((req, res, next) => {
     next();
   });
 
-//Enregistrement du "router" pour toutes les demandes effectuées
-app.use('/images', express.static(path.join(__dirname, '../images')));
-app.use('/api/auth', userRoad);
-app.use('/api/sauces', saucesRoad);
+//Gestions des routes principales
+app.use('/images', express.static(path.join(__dirname, '../images'))); //Les images
+app.use('/api/auth', userRoad); //Les authorisations
+app.use('/api/sauces', saucesRoad); //Les sauces
 
 //Export de l'app "express"
 module.exports = app;

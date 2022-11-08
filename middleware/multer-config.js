@@ -10,8 +10,8 @@ const MIME_TYPES = {
 };
 
 //Configuration
+//Indiquer à "multer" dans quel dossier il doit enregistrer les fichiers
 const storage = multer.diskStorage({
-  //Indiquer à "multer" dans quel dossier il doit enregistrer les fichiers
   destination: (req, file, callback) => {
     //"null" = il n'y a pas d'erreur, "images" = le dossier de destination
     callback(null, 'images');

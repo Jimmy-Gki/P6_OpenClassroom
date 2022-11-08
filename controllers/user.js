@@ -1,12 +1,18 @@
 //IMPORTS
 const bcrypt = require('bcrypt'); //Import du package bcrypt
 const jwt = require('jsonwebtoken'); //Import du package json web token
+const validator = require("email-validator");
 require("dotenv").config(); //Import du package dotenv
 
 const userModel = require('../models/user'); //Import du modèle de données "utilisateur"
 
 //Middleware pour l'enregistrement des nouveaux utilisateurs
 exports.signup = (req, res, next) => {
+    //On valide l'email grace au module email-validator
+    const isValidateEmail = validator.validate(req.body.email);
+        if (!isValidateEmail) {
+            res.status(400).json({message: 'Email incorrect !'});
+        } else {
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         //Création d'un nouvel utilisateur
@@ -21,6 +27,7 @@ exports.signup = (req, res, next) => {
           .catch(error => res.status(400).json({ message: 'utilisateur existant !' }));
       })
       .catch(error => res.status(500).json({ error }));
+    }
 };
 
 //Middleware pour la connexion des utilisateurs existants
