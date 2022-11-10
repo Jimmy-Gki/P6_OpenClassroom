@@ -5,7 +5,6 @@ const express = require('express'); //Import du package "express"
 const mongoose = require('mongoose'); //Import du package "mongoose"
 const bodyParser = require('body-parser'); //Import du package "body-parser"
 const path = require('path'); //Import du package "path"
-const helmet = require('helmet'); //Import du package helmet
 
 //IMPORTS DES ROUTES
 const saucesRoad = require('../road/sauce'); //Import de la route Sauce
@@ -13,10 +12,6 @@ const userRoad = require('../road/user'); //Import de la route Utilisateur
 
 //Création de l'app "express"
 const app = express();
-
-app.use(helmet({
-  crossOriginResourcePolicy: false,
-}))
 
 //Connexion à la base de données
 mongoose.connect(`mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER_NAME}.mongodb.net/${process.env.MONGODB_DATABASE_NAME}?retryWrites=true&w=majority`,

@@ -3,25 +3,24 @@ const Sauce = require('../models/sauce'); //Import du model sauce
 const fs = require('fs'); //Import du package "file system"
 
 
-//Middleware pour voir toute les sauces
-exports.getAllSauces = (req, res, next) => {
+//Fonction pour voir toute les sauces
+exports.getAllSauces = (req, res) => {
   Sauce.find()
     .then((sauces) =>  res.status(200).json(sauces))
     .catch((error) =>  res.status(400).json({ error }));
 };
 
-//Middleware pour voir une sauce
-exports.getOneSauce = (req, res, next) => {
+//Fonction pour voir une sauce
+exports.getOneSauce = (req, res) => {
   Sauce.findOne({ _id: req.params.id })
     .then(sauce => res.status(200).json(sauce))
     .catch(error => res.status(400).json({ error }));
 };
 
-//Middleware pour créer une nouvelle sauce
-exports.createSauce = (req, res, next) => {
+//Fonction pour créer une nouvelle sauce
+exports.createSauce = (req, res) => {
   //Transforme la chaîne de caractère en objet
   const sauceObject = JSON.parse(req.body.sauce);
-  delete sauceObject._id;
   //Création d'une nouvelle sauce
   const sauce = new Sauce({
     ...sauceObject,
@@ -36,8 +35,8 @@ exports.createSauce = (req, res, next) => {
     .catch(error => res.status(400).json({ error }));
 };
 
-//Middleware pour modifier une sauce
-exports.modifySauce =  (req, res, next) => {
+//Fonction pour modifier une sauce
+exports.modifySauce =  (req, res) => {
     //On vérifie si le fichier request.file existe
   const sauceObject = req.file ?
   { 
@@ -51,8 +50,8 @@ exports.modifySauce =  (req, res, next) => {
     .catch(error => res.status(400).json({ error }));
 };
 
-//Middleware pour supprimer une sauce
-exports.deleteSauce = (req, res, next) => {
+//Fonction pour supprimer une sauce
+exports.deleteSauce = (req, res) => {
   Sauce.findOne({_id: req.params.id})
   .then(sauce => {
     //On récupère le nom du fichier à supprimer
@@ -68,8 +67,8 @@ exports.deleteSauce = (req, res, next) => {
   .catch(error => res.status(500).json({ error }));
 };
 
-//Middleware qui permet d'ajouter ou de modifier les likes et dislikes
-exports.likeSauce = (req, res, next) =>{
+//Fonction qui permet d'ajouter ou de modifier les likes et dislikes
+exports.likeSauce = (req, res) =>{
  const sauceId = req.params.id;
  const userId = req.body.userId;
  const like = req.body.like;
