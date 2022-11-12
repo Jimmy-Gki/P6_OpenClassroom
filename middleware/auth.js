@@ -13,13 +13,12 @@ module.exports = (req, res, next) => {
        const decodedToken = jwt.verify(token, process.env.RANDOM_TOKEN_SECRET);
        //Extraire le "userId" qui est à l'intérieur
        const userId = decodedToken.userId;
-       //Ajout de "userId" à l'objet requête pour le rendre accessible à tous les middleware
-       req.auth = { userId: userId };
        //Vérifier si "userId" de la requête correspond à celui du token
        if (req.body.userId && req.body.userId !== userId) {
         throw "User ID non valable";
       } else {
-        next();
+        req.auth = { userId: userId };
+        next()
       }
    } catch(error) {
        res.status(401).json({ error });

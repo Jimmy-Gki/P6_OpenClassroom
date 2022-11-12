@@ -6,7 +6,7 @@ require("dotenv").config(); //Import du package dotenv
 
 const userModel = require('../models/user'); //Import du modèle de données "utilisateur"
 
-//Middleware pour l'enregistrement des nouveaux utilisateurs
+//Fonction pour l'enregistrement des nouveaux utilisateurs
 exports.signup = (req, res) => {
     //On valide l'email grace au module email-validator
     const isValidateEmail = validator.validate(req.body.email);
@@ -30,7 +30,7 @@ exports.signup = (req, res) => {
     }
 };
 
-//Middleware pour la connexion des utilisateurs existants
+//Fonction pour la connexion des utilisateurs existants
 exports.login = (req, res) => {
     //Chercher les utilisateurs dans la base de données
     userModel.findOne({ email: req.body.email })

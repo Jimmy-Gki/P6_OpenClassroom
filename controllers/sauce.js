@@ -37,21 +37,25 @@ exports.createSauce = (req, res) => {
 
 //Fonction pour modifier une sauce
 exports.modifySauce =  (req, res) => {
-    //On vérifie si le fichier request.file existe
-  const sauceObject = req.file ?
-  { 
+    //Vérifier une valeur via plusieurs conditions
+  const sauceObject = req.file ? { 
     ...JSON.parse(req.body.sauce),
     //On reconstruit l'url complète du fichier enregistré
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
    } : { ...req.body };
+   if (req.auth._id == Sauce.userId) {
    //On met à jour les modifications
   Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: 'Objet modifié !'}))
-    .catch(error => res.status(400).json({ error }));
-};
+    .catch(error => res.status(400).json({ error }))
+   } else {
+    error => res.status(403).json({ message: 'Utilisateur non autorisé' })
+   }
+}
 
 //Fonction pour supprimer une sauce
 exports.deleteSauce = (req, res) => {
+  if (req.auth._id == Sauce.userId) {
   Sauce.findOne({_id: req.params.id})
   .then(sauce => {
     //On récupère le nom du fichier à supprimer
@@ -64,7 +68,10 @@ exports.deleteSauce = (req, res) => {
       .catch(error => res.status(400).json({ error }));
     });
   })
-  .catch(error => res.status(500).json({ error }));
+  .catch(error => res.status(500).json({ error }))
+  } else {
+    error => res.status(403).json({ message: 'Utilisateur non autorisé' })
+    }
 };
 
 //Fonction qui permet d'ajouter ou de modifier les likes et dislikes
@@ -126,4 +133,4 @@ exports.likeSauce = (req, res) =>{
         })
         .catch((error) => res.status(404).json({ error }))
     }
- }
+  }
