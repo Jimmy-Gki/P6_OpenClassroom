@@ -75,62 +75,55 @@ exports.deleteSauce = (req, res) => {
 };
 
 //Fonction qui permet d'ajouter ou de modifier les likes et dislikes
-exports.likeSauce = (req, res) =>{
- const sauceId = req.params.id;
- const userId = req.body.userId;
- const like = req.body.like;
+exports.likeSauce = (req, res) => {
 
-    //Like = 1 => L'utilisateur aime la sauce (like = +1)
-    if (like === 1) {
-      Sauce.updateOne({ _id: sauceId }, {
+  Sauce.findOne({
+      _id: req.params.id
+  }).then((sauce) => {
+      //Ajouter un like à une sauce pour un utilisateur unique
+      if (req.body.like === 1 && !sauce.usersLiked.includes(req.body.userId)) {
+        Sauce.updateOne({ _id: req.params.id }, {
           // On push l'utilisateur et on incrémente le compteur de 1
-          $push: { usersLiked: userId },
+          $push: { usersLiked: req.body.userId },
           $inc: { likes: +1 },
         })
         .then(() => res.status(200).json({ message: 'like ajouté !' }))
         .catch((error) => res.status(400).json({ error }))
-    }
 
-    //Like = -1 => L'utilisateur n'aime pas la sauce (dislike = +1)
-    if (like === -1) {
-      Sauce.updateOne(
-          { _id: sauceId }, {
-            $push: { usersDisliked: userId },
+          //Ajouter un dislike à une sauce pour un utilisateur unique
+      } else if (req.body.like === -1 && !sauce.usersDisliked.includes(req.body.userId)) {
+          Sauce.updateOne(
+          { _id: req.params.id }, {
+            $push: { usersDisliked: req.body.userId },
             $inc: { dislikes: +1 },
           })
         .then(() => { res.status(200).json({message: 'Dislike ajouté !'})
         })
         .catch((error) => res.status(400).json({ error }))
-    }
 
-    // Like = 0  => L'utilisateur annule son like (like = 0)
-    if (like === 0) {
-      Sauce.findOne({ _id: sauceId })
-        .then((sauce) => {
-          if (sauce.usersLiked.includes(userId)) { // Si il s'agit d'annuler un like
-            Sauce.updateOne({ _id: sauceId }, {
+      } else {
+          //Retrait d'un like pour un utilisateur et une sauce unique
+          req.body.like = 0;
+          if (sauce.usersLiked.includes(req.body.userId)) {
+              Sauce.updateOne({ _id: req.params.id }, {
                 //Utilisation de l'opérateur '$pull' de mongoDB pour supprimer le 'userId' dans le champ 'usersLiked' dans la base de données
                 //Utilisation de l'opérateur '$inc' de mongoDB pour soustraire la valeur fixée du champ 'dislike' à '-1' dans la base de données
-                $pull: { usersLiked: userId },
+                $pull: { usersLiked: req.body.userId },
                 $inc: { likes: -1},
               })
               .then(() => res.status(200).json({ message: 'Like retiré !' }))
               .catch((error) => res.status(400).json({ error }))
           }
-          if (sauce.usersDisliked.includes(userId)) { // Si il s'agit d'annuler un dislike
-            //Mise à jour des modifications dans la base de données
-            Sauce.updateOne({
-                _id: sauceId}, 
-                {
-                $pull: {
-                  usersDisliked: userId },
-                $inc: {
-                  dislikes: -1 },
-              })
-              .then(() => res.status(200).json({ message: 'Dislike retiré !' }))
-              .catch((error) => res.status(400).json({ error }))
+          //Retrait d'un dislike pour un utilisateur et une sauce unique
+          if (sauce.usersDisliked.includes(req.body.userId)) {
+            Sauce.updateOne({ _id: req.params.id }, {
+              //Même système que pour supprimer le like
+              $pull: { usersDisliked: req.body.userId },
+              $inc: { dislikes: -1},
+            })
+            .then(() => res.status(200).json({ message: 'Dislike retiré !' }))
+            .catch((error) => res.status(400).json({ error }))
           }
-        })
-        .catch((error) => res.status(404).json({ error }))
-    }
-  }
+      }
+  });
+};
