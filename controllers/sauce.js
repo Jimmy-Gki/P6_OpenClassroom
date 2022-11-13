@@ -38,12 +38,12 @@ exports.createSauce = (req, res) => {
 //Fonction pour modifier une sauce
 exports.modifySauce =  (req, res) => {
     //Vérifier une valeur via plusieurs conditions
+    if (req.auth._id == Sauce.userId) {
   const sauceObject = req.file ? { 
     ...JSON.parse(req.body.sauce),
     //On reconstruit l'url complète du fichier enregistré
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
    } : { ...req.body };
-   if (req.auth._id == Sauce.userId) {
    //On met à jour les modifications
   Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: 'Objet modifié !'}))
@@ -83,7 +83,7 @@ exports.likeSauce = (req, res) => {
       //Ajouter un like à une sauce pour un utilisateur unique
       if (req.body.like === 1 && !sauce.usersLiked.includes(req.body.userId)) {
         Sauce.updateOne({ _id: req.params.id }, {
-          // On push l'utilisateur et on incrémente le compteur de 1
+          // On push l'utilisateur dans le champ userLiked et on incrémente le compteur de 1
           $push: { usersLiked: req.body.userId },
           $inc: { likes: +1 },
         })
