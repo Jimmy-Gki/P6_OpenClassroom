@@ -37,6 +37,8 @@ exports.createSauce = (req, res) => {
 
 //Fonction pour modifier une sauce
 exports.modifySauce =  (req, res) => {
+  Sauce.findOne({_id: req.params.id})
+  .then(sauce => {
     //Vérifier une valeur via plusieurs conditions
     if (req.auth._id == Sauce.userId) {
   const sauceObject = req.file ? { 
@@ -48,16 +50,18 @@ exports.modifySauce =  (req, res) => {
   Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: 'Objet modifié !'}))
     .catch(error => res.status(400).json({ error }))
-   } else {
+  } else {
     error => res.status(403).json({ message: 'Utilisateur non autorisé' })
-   }
+    }
+  })
+  .catch(error => res.status(500).json({ error }))
 }
 
 //Fonction pour supprimer une sauce
 exports.deleteSauce = (req, res) => {
-  if (req.auth._id == Sauce.userId) {
   Sauce.findOne({_id: req.params.id})
   .then(sauce => {
+    if (req.auth._id == Sauce.userId) {
     //On récupère le nom du fichier à supprimer
     const filename = sauce.imageUrl.split('/images/')[1];
     //On utilise unlink du package "fs" pour supprimer un fichier du système
@@ -67,11 +71,11 @@ exports.deleteSauce = (req, res) => {
       .then(() => res.status(200).json({ message: 'Objet supprimé !'}))
       .catch(error => res.status(400).json({ error }));
     });
-  })
-  .catch(error => res.status(500).json({ error }))
   } else {
     error => res.status(403).json({ message: 'Utilisateur non autorisé' })
     }
+  })
+  .catch(error => res.status(500).json({ error }))
 };
 
 //Fonction qui permet d'ajouter ou de modifier les likes et dislikes
