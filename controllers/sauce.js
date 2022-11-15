@@ -40,7 +40,7 @@ exports.modifySauce =  (req, res) => {
   Sauce.findOne({_id: req.params.id})
   .then(sauce => {
     //Vérifier une valeur via plusieurs conditions
-    if (req.body._id == Sauce.userId) {
+    if (req.auth.userId === sauce.userId) {
   const sauceObject = req.file ? { 
     ...JSON.parse(req.body.sauce),
     //On reconstruit l'url complète du fichier enregistré
@@ -61,7 +61,7 @@ exports.modifySauce =  (req, res) => {
 exports.deleteSauce = (req, res) => {
   Sauce.findOne({_id: req.params.id})
   .then(sauce => {
-    if (req.body._id == Sauce.userId) {
+    if (req.auth.userId === sauce.userId) {
     //On récupère le nom du fichier à supprimer
     const filename = sauce.imageUrl.split('/images/')[1];
     //On utilise unlink du package "fs" pour supprimer un fichier du système
